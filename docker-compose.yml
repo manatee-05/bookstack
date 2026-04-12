@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: bookstack
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bookstack
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  app:
+    build: .
+    ports:
+      - "6003:6003"
+    environment:
+      - DATABASE_URL=postgres://bookstack:password@db:5432/bookstack
+      - PORT=6003
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
